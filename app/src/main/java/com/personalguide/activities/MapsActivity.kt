@@ -8,15 +8,18 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.design.widget.FloatingActionButton
 import android.support.v4.content.ContextCompat
+import android.support.v7.widget.CardView
+import android.view.View
 import android.widget.Toast
 import com.google.android.gms.location.LocationServices
-import com.google.android.gms.location.places.Place
 
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
@@ -29,7 +32,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private var mMap: GoogleMap? = null
     private lateinit var model: ActivityVM
     private var marker: Marker? = null
-    private var placesUtil: PlacesUtil? = null
+    private var placesUtils: PlacesUtils? = null
+    private var filtersFAB: FloatingActionButton? = null
+    private var filtersBox: CardView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,8 +42,40 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
         initViewModel()
         initMap()
+        initToolbar()
+        initView()
 
-        placesUtil = PlacesUtil(model, this)
+        placesUtils = PlacesUtils(model, this, getPlaceType())
+    }
+
+    private fun getPlaceType(): HashMap<String, Array<String>> {
+        val types = HashMap<String, Array<String>>()
+        types[ACTIVITIES] = baseContext.resources.getStringArray(R.array.activities_places)
+        types[VISIT] = baseContext.resources.getStringArray(R.array.visit_places)
+        types[DINE] = baseContext.resources.getStringArray(R.array.dine_places)
+        types[SHOP] = baseContext.resources.getStringArray(R.array.shop_places)
+        return types
+    }
+
+    private fun initView() {
+        filtersFAB = findViewById(R.id.filters_fab)
+        filtersBox = findViewById(R.id.filters_box)
+
+        setListeners()
+    }
+
+    private fun setListeners() {
+        filtersFAB?.setOnClickListener {
+            filtersBox?.let {
+                if (filtersBox!!.visibility == View.GONE)
+                    filtersBox!!.visibility = View.VISIBLE
+                else filtersBox!!.visibility = View.GONE
+            }
+        }
+    }
+
+    private fun initToolbar() {
+
     }
 
     private fun initMap() {
@@ -88,13 +125,13 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         model.getPermissionState().observe(this, Observer { isPermissionGranted ->
             if (isPermissionGranted != null && isPermissionGranted) {
                 getCurrentLocation()
-                getPlaces()
             }
         })
 
         model.getCurrentLocation().observe(this, Observer { currentLocation ->
             currentLocation?.let {
                 goToLocation(it)
+                getPlaces()
             }
         })
 
@@ -103,10 +140,46 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
             }
         })
+
+        model.getListOfActivityPlaces().observe(this, Observer { placeList ->
+            placeList?.let {
+                for (place in it) {
+                    mMap?.let { map -> MapUtils.addMarker(map, place.geometry.getLatLon(), null, place.name) }
+                }
+            }
+        })
+
+        model.getListOfVisitPlaces().observe(this, Observer { placeList ->
+            placeList?.let {
+                for (place in it) {
+                    mMap?.let { map -> MapUtils.addMarker(map, place.geometry.getLatLon(), BitmapDescriptorFactory.HUE_GREEN, place.name) }
+                }
+            }
+        })
+
+        model.getListOfDinePlaces().observe(this, Observer { placeList ->
+            placeList?.let {
+                for (place in it) {
+                    mMap?.let { map -> MapUtils.addMarker(map, place.geometry.getLatLon(), BitmapDescriptorFactory.HUE_BLUE, place.name) }
+                }
+            }
+        })
+
+        model.getListOfShopPlaces().observe(this, Observer { placeList ->
+            placeList?.let {
+                for (place in it) {
+                    mMap?.let { map -> MapUtils.addMarker(map, place.geometry.getLatLon(), BitmapDescriptorFactory.HUE_ORANGE, place.name) }
+                }
+
+            }
+        })
     }
 
     private fun getPlaces() {
-        placesUtil?.getNearbyPlaces()
+        placesUtils?.getNearbyPlaces(ACTIVITIES)
+        placesUtils?.getNearbyPlaces(VISIT)
+        placesUtils?.getNearbyPlaces(DINE)
+        placesUtils?.getNearbyPlaces(SHOP)
     }
 
     /**

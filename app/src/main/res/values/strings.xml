@@ -3,4 +3,49 @@
     <string name="title_activity_maps">Map</string>
     <string name="places_base_url" translatable="false">https://maps.googleapis.com/</string>
     <string name="google_maps_server_key">AIzaSyBRCGhSA7Or61Or01aXxZcO_zXS39-tcfM</string>
+
+    <string name="activities">Activities</string>
+    <string name="visit">Visit</string>
+    <string name="dine">Dine</string>
+    <string name="shops">Shops</string>
+
+    <string-array name="visit_places" translatable="false">
+        <item>aquarium</item>
+        <item>art_gallery</item>
+        <item>amusement_park</item>
+        <item>church</item>
+        <item>city_hall</item>
+        <item>zoo</item>
+        <item>stadium</item>
+        <item>museum</item>
+    </string-array>
+
+    <string-array name="dine_places" translatable="false">
+        <item>food</item>
+        <item>bar</item>
+        <item>bakery</item>
+        <item>cafe</item>
+    </string-array>
+
+    <string-array name="activities_places" translatable="false">
+        <item>campground</item>
+        <item>casino</item>
+        <item>gym</item>
+        <item>spa</item>
+        <item>rv_park</item>
+        <item>park</item>
+        <item>movie_theater</item>
+    </string-array>
+
+    <string-array name="shop_places" translatable="false">
+        <item>shopping_mall</item>
+        <item>store</item>
+        <item>book_store</item>
+        <item>car_dealer</item>
+        <item>department_store</item>
+        <item>florist</item>
+        <item>funeral_home</item>
+        <item>furniture_store</item>
+        <item>storage</item>
+    </string-array>
 </resources>
