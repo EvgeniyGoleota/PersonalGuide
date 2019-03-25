@@ -12,24 +12,31 @@ import retrofit2.Response
 class PlacesUtils(
     private val viewModel: ActivityVM,
     private val context: Context,
-    private val placesTypeMap: HashMap<String, Array<String>> ) {
+    private val placesTypeMap: HashMap<String, Array<String>>
+) {
 
     @SuppressLint("MissingPermission")
     fun getNearbyPlaces(groupOfType: String, nextPageToken: String? = null) {
         val placeManager = PlaceApiManager(context)
         viewModel.getCurrentLocation().value?.let { location ->
-            placeManager.getGooglePlacesByLocationAndType(5000, location.latitude, location.longitude, GOOGLE_BROWSER_API_KEY,
-                nextPageToken, getTypesByTag(groupOfType), object : Callback<PlaceResponse> {
+            placeManager.getGooglePlacesByLocationAndType(5000,
+                location.latitude,
+                location.longitude,
+                GOOGLE_BROWSER_API_KEY,
+                nextPageToken,
+                getTypesByTag(groupOfType),
+                object : Callback<PlaceResponse> {
                     override fun onResponse(call: Call<PlaceResponse>, response: Response<PlaceResponse>) {
                         if (response.isSuccessful) {
                             val result = response.body()?.getResults()
                             result?.let {
-                                when (groupOfType) {
-                                    ACTIVITIES -> viewModel.addListOfActivityPlaces(it)
-                                    VISIT -> viewModel.addListOfVisitPlaces(it)
-                                    DINE -> viewModel.addListOfDinePlaces(it)
-                                    SHOP -> viewModel.addListOfShopPlaces(it)
-                                }
+                                if (result.size != 0)
+                                    when (groupOfType) {
+                                        ACTIVITIES -> viewModel.addListOfActivityPlaces(it)
+                                        VISIT -> viewModel.addListOfVisitPlaces(it)
+                                        DINE -> viewModel.addListOfDinePlaces(it)
+                                        SHOP -> viewModel.addListOfShopPlaces(it)
+                                    }
 
                                 response.body()?.let { response ->
                                     if (response.getNext_page_token() != null) {

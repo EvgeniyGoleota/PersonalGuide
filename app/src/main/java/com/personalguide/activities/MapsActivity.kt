@@ -23,6 +23,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.maps.android.clustering.ClusterManager
 import com.personalguide.R
 import com.personalguide.utils.*
 import com.personalguide.viewmodels.ActivityVM
@@ -35,6 +36,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private var placesUtils: PlacesUtils? = null
     private var filtersFAB: FloatingActionButton? = null
     private var filtersBox: CardView? = null
+    private var mClusterManager: ClusterManager<MapClusterItem>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -161,6 +163,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             placeList?.let {
                 for (place in it) {
                     mMap?.let { map -> MapUtils.addMarker(map, place.geometry.getLatLon(), BitmapDescriptorFactory.HUE_BLUE, place.name) }
+//                    mClusterManager?.addItem(MapClusterItem(place.geometry.getLatLon(), place.name))
                 }
             }
         })
@@ -212,7 +215,11 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         val locationProviderClient = LocationServices.getFusedLocationProviderClient(this)
         locationProviderClient.lastLocation.addOnSuccessListener(this) { location ->
             if (location != null) {
-                model.setCurrentLocation(LatLng(location.latitude, location.longitude))
+//                val londonLatLng = LatLng(51.505703, -0.110987)
+//                val londonLatLng = LatLng(48.855089, 2.357835)
+                val londonLatLng = LatLng(40.762503, -73.975399)
+                model.setCurrentLocation(londonLatLng)
+//                model.setCurrentLocation(LatLng(location.latitude, location.longitude))
             }
         }
     }
@@ -251,5 +258,11 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
+        setUpCluster(mMap!!)
+    }
+
+    private fun setUpCluster(mMap: GoogleMap) {
+        mClusterManager = ClusterManager(this, mMap)
+        mMap.setOnCameraIdleListener(mClusterManager)
     }
 }

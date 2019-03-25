@@ -48,11 +48,12 @@ class MapUtils {
         ): Marker {
             return map.addMarker(MarkerOptions().apply {
                 position(position)
-                draggable(isDraggable)
-                snippet(title)
                 if (markerColor != null) {
                     icon(BitmapDescriptorFactory.defaultMarker(markerColor))
                 }
+                draggable(isDraggable)
+                title(title)
+//                snippet(title)
             })
         }
     }

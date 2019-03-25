@@ -35,29 +35,38 @@ class ActivityVM : ViewModel() {
     fun getPlacesList() = placesList
 
     fun addListOfActivityPlaces(placeResponse: List<Place>) {
-        if (this.placesListActivities.value == null) this.placesListActivities.value = mutableListOf()
-        this.placesListActivities.value!!.addAll(placeResponse)
+        if (this.placesListActivities.value == null)
+            this.placesListActivities.value = placeResponse as MutableList<Place>
+        else
+            this.placesListActivities.value!!.addAll(placeResponse)
+
     }
 
     fun getListOfActivityPlaces() = placesListActivities
 
     fun addListOfVisitPlaces(placeResponse: List<Place>) {
-        if (this.placesListVisit.value == null) this.placesListVisit.value = mutableListOf()
-        this.placesListVisit.value!!.addAll(placeResponse)
+        if (this.placesListVisit.value == null)
+            this.placesListVisit.value = placeResponse as MutableList
+        else
+            this.placesListVisit.value!!.addAll(placeResponse)
     }
 
     fun getListOfVisitPlaces() = placesListVisit
 
     fun addListOfDinePlaces(placeResponse: List<Place>) {
-        if (this.placesListDine.value == null) this.placesListDine.value = mutableListOf()
-        this.placesListDine.value!!.addAll(placeResponse)
+        if (this.placesListDine.value == null)
+            this.placesListDine.value = placeResponse as MutableList
+        else
+            this.placesListDine.value!!.addAll(placeResponse)
     }
 
     fun getListOfDinePlaces() = placesListDine
 
     fun addListOfShopPlaces(placeResponse: List<Place>) {
-        if (this.placesListShop.value == null) this.placesListShop.value = mutableListOf()
-        this.placesListShop.value!!.addAll(placeResponse)
+        if (this.placesListShop.value == null)
+            this.placesListShop.value = placeResponse as MutableList
+        else
+            this.placesListShop.value!!.addAll(placeResponse)
     }
 
     fun getListOfShopPlaces() = placesListShop
